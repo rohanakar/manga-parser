@@ -1,37 +1,15 @@
 import discord
-from sqlalchemy import create_engine, Column, Integer, String, Boolean
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 import re
 import requests
 from bs4 import BeautifulSoup
 import urllib.request
 import os
+from domain.manga import Manga
+from utils import database
 
-# Create the SQLite database engine
-engine = create_engine('sqlite:///sample.db', echo=True)
-
-Base = declarative_base()
-
-# Define the Employee model
-class Manga(Base):
-    __tablename__ = 'employees'
-    id = Column(Integer, primary_key=True)
-    url = Column(String(255), nullable=False)
-    title = Column(String(255), nullable=False)
-    processed = Column(Boolean, default=False)
-
-# Create the database tables (if they don't exist)
-Base.metadata.create_all(engine)
-
-Session = sessionmaker(bind=engine)
-
-def add_manga(url,title):
-    session = Session()
-    manga = Manga(url=url,title=title,processed=False)
-    session.add(manga)
-    session.commit()
-    session.close()
+def add_manga(folder):
+    manga = Manga(folder=folder,status=0)
+    database.save(manga)
 
 
 intents = discord.Intents.default()
@@ -52,7 +30,7 @@ def save_images_from_url(url,folder_name):
     # Create a directory to save the images
     
 
-    folder_path = './resources/inbox/'+folder_name
+    folder_path = 'resources/inbox/'+folder_name
 
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
@@ -80,6 +58,8 @@ def save_images_from_url(url,folder_name):
             print(e)
             print(f"Failed to save image: {img_name}")
 
+    add_manga(folder_name)
+
 @client.event
 async def on_ready():
     print(f'We have logged in as {client.user}')
@@ -87,7 +67,6 @@ async def on_ready():
 @client.event
 async def on_message(message):
     for url_pair in extract_url_pair(message.content):
-        add_manga(url_pair[0],url_pair[1])
         save_images_from_url(url_pair[0],url_pair[1])
 
 def extract_url_pair(text):
