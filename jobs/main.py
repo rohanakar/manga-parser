@@ -17,7 +17,6 @@ logger = logging.getLogger(__name__)
 def process_inbox(arguments):
     logger.debug("Processing inbox...")
     logger.info(arguments)
-    # # Your processing logic here
     logger.info('initializing folders')
 
     initialize_folders([arguments[key] for key in ['inbox_folder','processing_folder','processed_folder','ost_folder']])

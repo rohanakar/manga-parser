@@ -34,7 +34,7 @@ def merge_video_files(arguments):
             return
     except :
         return
-    # video_generation_service.combine_videos(files,output_file)
+    video_generation_service.combine_videos(files,output_file)
     
     folder_tts = input_folder[len(default_values['processing_folder']):]
     folder,tts = folder_tts.split("/")[1:3]

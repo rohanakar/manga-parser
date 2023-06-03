@@ -34,21 +34,21 @@ def process_images(folders):
     folders = [folder for folder in fileutils.list_folders(inbox_folder) if not already_processed(folder,tts)]
     logger.debug(folders)
     
-    # fileutils.create_folders([fileutils.get_relative_path(processing_folder,folder) for folder in folders])
-    # logger.debug(f'folders to process => {len(folders)}')
+    fileutils.create_folders([fileutils.get_relative_path(processing_folder,folder) for folder in folders])
+    logger.debug(f'folders to process => {len(folders)}')
     
-    # files = [(fileutils.get_relative_path(folder,file)) for folder in folders for file in fileutils.get_files(fileutils.get_relative_path(inbox_folder,folder))]
-    # logger.debug(f'files to process => {len(files)}')
-    # for file in files:
-    #     metadata_file = process_image_and_write_video_metadata({
-    #         'input_image':file,
-    #         'output_directory':processing_folder,
-    #         'tts':tts
-    #     })
-    #     file_name = fileutils.get_tts_file_name(file,tts)
+    files = [(fileutils.get_relative_path(folder,file)) for folder in folders for file in fileutils.get_files(fileutils.get_relative_path(inbox_folder,folder))]
+    logger.debug(f'files to process => {len(files)}')
+    for file in files:
+        metadata_file = process_image_and_write_video_metadata({
+            'input_image':file,
+            'output_directory':processing_folder,
+            'tts':tts
+        })
+        file_name = fileutils.get_tts_file_name(file,tts)
 
-    #     output_file =  fileutils.get_relative_path(processing_folder,fileutils.change_extension(file_name,"mp4"))
-    #     video_generation_service.generate_video_from_file(input_meatadata_file=metadata_file,output_file=output_file)
+        output_file =  fileutils.get_relative_path(processing_folder,fileutils.change_extension(file_name,"mp4"))
+        video_generation_service.generate_video_from_file(input_meatadata_file=metadata_file,output_file=output_file)
 
     
 
