@@ -93,7 +93,7 @@ def generate_moving(image_clip:ImageClip, audio_clip:AudioClip,output_file):
 
 def combine_vertical(video_clips:List['VideoClip'],output_file):
     final_clip = concatenate_videoclips(video_clips,method='compose')
-    if output_file.find('True') == -1:
+    if output_file.find('False') != -1:
         audio_clips = getOST()
         if len(audio_clips)!=0:
             audio_duration = final_clip.duration//len(audio_clips)
