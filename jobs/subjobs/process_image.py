@@ -14,20 +14,6 @@ from utils import fileutils
 # Import the logging configuration from the logging_config module
 logger = logging.getLogger(__name__)
 
-def getOST():
-    config = configparser.ConfigParser()
-    config.read('config/app.ini')
-
-    sound_values = config["SOUND"]
-    ost_folder = sound_values["ost_folder"]
-    audio_files = [fileutils.get_relative_path(ost_folder,file) for file in fileutils.get_files(ost_folder)]
-    
-    logger.debug(f'Audio files {audio_files}')
-    if not audio_files:
-        logger.error(f"No audio files found in {ost_folder} directory")
-        return ''
-    return random.choice(audio_files)
-
 def process_image_and_write_video_metadata(arguments):
     input_image,output_directory,tts = arguments.values()
 
@@ -44,9 +30,9 @@ def process_image_and_write_video_metadata(arguments):
         return output_file
     
     if not tts:
-        audioFile = getOST()
-        audio_metadata = AudioMetadata(audioFile,Rectangle(0,0,0,0))
-        video_metadata = VideoMetadata(input_image,FileType.IMAGE,[{'sounds':[audio_metadata],'panel':[0,0,2000,2000]}])
+        # audioFile = getOST()
+        # audio_metadata = AudioMetadata(audioFile,Rectangle(0,0,0,0))
+        video_metadata = VideoMetadata(input_image,FileType.IMAGE,[{'sounds':[],'panel':[0,0,2000,2000]}])
         logger.debug(video_metadata)
         video_metadata = json.dumps(video_metadata,default=lambda o: o.__dict__,  indent=4)
         fileutils.writeToFile(output_file,video_metadata,'w')

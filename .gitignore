@@ -158,7 +158,9 @@ venv.bak/
 # mkdocs documentation
 /site
 
-resources
+resources/inbox
+resources/processing
+resources/processed
 
 # mypy
 .mypy_cache/

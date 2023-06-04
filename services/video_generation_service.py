@@ -4,6 +4,7 @@ import json
 from math import ceil
 import os
 import logging
+import random
 from typing import List
 import logging.config
 import os
@@ -48,6 +49,22 @@ logger = logging.getLogger(__name__)
 #     final_clip = final_clip.set_duration(sound_clip.duration)
 #     return final_clip
 
+
+def getOST():
+    config = configparser.ConfigParser()
+    config.read('config/app.ini')
+
+    sound_values = config["SOUND"]
+    ost_folder = sound_values["ost_folder"]
+    audio_files = [fileutils.get_relative_path(ost_folder,file) for file in fileutils.get_files(ost_folder)]
+    logger.debug(f'Audio files {audio_files}')
+    if not audio_files:
+        logger.error(f"No audio files found in {ost_folder} directory")
+        return []
+    random.shuffle(audio_files)
+    return audio_files[:5]
+
+
 def generate_base(src,file_type,page_part):
     if(file_type==FileType.IMAGE):
         video_clip = ImageClip(src)
@@ -75,27 +92,15 @@ def generate_moving(image_clip:ImageClip, audio_clip:AudioClip,output_file):
     return final_clip
 
 def combine_vertical(video_clips:List['VideoClip'],output_file):
-    # clips=[]
-    # total_duration=0
-    # video_clips = [video_clip.resize(width=1920) for video_clip in video_clips]
-    # max_h = max(clip.h for clip in video_clips)
-    # max_w = max(clip.w for clip in video_clips)
-    # for video_clip in video_clips:
-    #     # panel_height = video_clip.h
-    #     # duration = video_clip.duration
-    #     # spped = panel_height/duration
-        
-    #     clip = video_clip.set_start(total_duration)
-    #     # clip = clip.resize(width=1920)
-    #     h = video_clip.h
-    #     w = video_clip.w
-    #     clip = clip.set_position((0,(max_h-h)//2))
-    #     clips.append(clip)
-        
-    #     total_duration+=video_clip.duration
-    # final_clip = CompositeVideoClip(clips).set_duration(total_duration)
-    # final_clip = final_clip.resize(width=1920)
     final_clip = concatenate_videoclips(video_clips,method='compose')
+    if output_file.find('True') == -1:
+        audio_clips = getOST()
+        if len(audio_clips)!=0:
+            audio_duration = final_clip.duration//len(audio_clips)
+            audio_clips = [AudioFileClip(file).audio_loop(duration=audio_duration) for file in audio_clips]
+            random.shuffle(audio_clips)
+            audio_clip = concatenate_audioclips(audio_clips)
+            final_clip.set_audio(audio_clip)
     final_clip.write_videofile(output_file, codec='libx264', audio_codec='aac',fps=24)
 
 def calculate_position(sound_data):
@@ -128,13 +133,7 @@ def generate_video(video_metadata:VideoMetadata,output_file,tts):
     panels = video_metadata.panels
     
     if not tts :
-        sounds_data = [sound for panel in panels for sound in panel['sounds']]
-        audio_clip = None
-        try :
-            audio_clip = AudioFileClip(sounds_data[0]['src'])
-        except Exception as e:
-            logger.debug(e)
-        generate_moving(ImageClip(src),audio_clip,output_file)
+        generate_moving(ImageClip(src),None,output_file)
         return 
     
     video_clips = []

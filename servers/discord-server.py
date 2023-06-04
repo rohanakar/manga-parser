@@ -59,7 +59,7 @@ def save_images_from_url(url,folder_name):
             print(e)
             print(f"Failed to save image: {img_name}")
 
-    add_manga(folder_name)
+    # add_manga(folder_name)
 
 @client.event
 async def on_ready():
