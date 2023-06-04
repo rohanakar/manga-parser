@@ -1,0 +1,177 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Manga Server</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: #fff;
+            padding: 20px;
+            margin: 0;
+        }
+
+        h1 {
+            color: #fff;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+
+        li a {
+           display: block;
+            background-color: #444;
+            color: #fff;
+            padding: 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        li a:hover {
+            background-color: #666;
+        }
+
+
+        li span {
+            margin-right: 10px;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            filter: invert(100%);
+        }
+    </style>
+</head>
+<body>
+    <h1>Manga Titles</h1>
+    <ul>
+        {% for title in manga_titles %}
+        <li>
+            <a>
+            <span>{{ title.replace('-', ' ') }}</span>
+            <img class="icon" src="{{ url_for('static', filename='icons/tts_icon.svg') }}" alt="View Video with TTS">
+            <img class="icon" src="{{ url_for('static', filename='icons/no_tts_icon.svg') }}" alt="View Video without TTS">
+            </a>    
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Manga Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .list {
+            width: 80%;
+            margin: 0 auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #333;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            animation: fade-in 0.5s ease-in-out;
+            position: relative;
+        }
+
+        .text:hover {
+            background-color: #444;
+            cursor: pointer;
+        }
+
+        .text {
+            flex-grow: 1;
+            margin-right: 10px;
+            padding: 18px;
+        }
+
+        .icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            /* margin-left: 10px; */
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            filter: invert(100%);
+            margin: auto;
+        }
+
+        .icons:hover {
+            background-color: #444;
+        }
+
+        .icons {
+            position: absolute;
+            right: 0px;
+            bottom: 0;
+            top: 0;
+            width: 50px;
+            background-color: #333;
+        }
+
+        /* Responsive Styles */
+        @media screen and (max-width: 768px) {
+            .list {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Manga Viewer</h1>
+    <div class="list">
+        {% for title in manga_titles %}
+            <div class="list-item">
+                <div class="text" onclick="location.href = '/manga/{{title}}';">{{ title.replace('-', ' ')}}</div>
+                <div class="icons">
+                    <img class="icon" src="{{ url_for('static', filename='icons/video_icon.svg') }}" alt="Icon 1">
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+</body>
+
+</html>

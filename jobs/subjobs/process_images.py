@@ -38,8 +38,11 @@ def process_images(folders):
     logger.debug(f'folders to process => {len(folders)}')
     
     files = [(fileutils.get_relative_path(folder,file)) for folder in folders for file in fileutils.get_files(fileutils.get_relative_path(inbox_folder,folder))]
-    logger.debug(f'files to process => {len(files)}')
+    logger.info(f'files to process => {len(files)}')
+    i=0
     for file in files:
+        i+=1
+        logger.info(f'*********** generating clips -> progress {i}/{len(files)} ***********')
         metadata_file = process_image_and_write_video_metadata({
             'input_image':file,
             'output_directory':processing_folder,

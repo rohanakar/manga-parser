@@ -7,10 +7,11 @@ import os
 from domain.manga import Manga
 from utils import database
 
-def add_manga(folder):
-    manga = Manga(folder=folder,status=0)
-    database.save(manga)
+# def add_manga(folder):
+#     manga = Manga(folder=folder,status=0)
+#     database.save(manga)
 
+discord_key = os.getenv('discord_key','discord_key')
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -42,7 +43,7 @@ def save_images_from_url(url,folder_name):
         headers = {'User-Agent': 'Mozilla/5.0'}
         if(img_url.startswith("http") == False):
             continue
-        if(img_url.endswith("png") == False):
+        if not ( img_url.endswith("png") == True or img_url.endswith("jpg") == True or img_url.endswith("jpeg") == True):
             continue
         if(img_url.endswith("_01.png")):
             continue
@@ -77,6 +78,7 @@ def extract_url_pair(text):
     matches = re.findall(url_pattern, text)
     url_pair = []
     for url in matches:
+        print(url)
         last_slash_index = url.rfind('/')
         page_name = url[last_slash_index + 1:].split("review")[0]
         url_pair.append((url,page_name))
@@ -84,7 +86,7 @@ def extract_url_pair(text):
 
     return url_pair
 
-client.run('MTExMjA1NTY5NDI1MDczNzc3NA.Glx1pv.l1IVHHXjGUirsTATopi1jdgQOMs7UPI3b4lcUg')
+client.run(discord_key)
 
 
 

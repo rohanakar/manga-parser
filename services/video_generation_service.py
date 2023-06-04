@@ -63,30 +63,39 @@ def generate_moving(image_clip:ImageClip, audio_clip:AudioClip,output_file):
     # image_clip = image_clip.scroll(y_speed=10)
     height=1080
     panel_height = ceil(height/3)
-    duration = audio_clip.duration
+    duration = 20
     spped = (height-panel_height)/(duration - 1)
     image_clip = image_clip.resize(height=height)
     clips = [ image_clip.set_position(setPosition(panel_height,i,spped)).crop(0,panel_height*copy.deepcopy(i),image_clip.w,panel_height*copy.deepcopy(i)+panel_height).set_duration(duration) for i in range(0,3)]   
-    clips[0]=clips[0].set_audio(audio_clip)
+    if audio_clip is not None :
+        clips[0]=clips[0].set_audio(audio_clip)
     final_clip = CompositeVideoClip(clips).set_duration(duration)
     final_clip = final_clip.resize(height=1080,width=1920)
     final_clip.write_videofile(output_file, codec='libx264', audio_codec='aac',fps=24)
     return final_clip
 
 def combine_vertical(video_clips:List['VideoClip'],output_file):
-    clips=[]
-    total_duration=0
-    for video_clip in video_clips:
-        # panel_height = video_clip.h
-        # duration = video_clip.duration
-        # spped = panel_height/duration
-        clip = video_clip.set_start(total_duration)
+    # clips=[]
+    # total_duration=0
+    # video_clips = [video_clip.resize(width=1920) for video_clip in video_clips]
+    # max_h = max(clip.h for clip in video_clips)
+    # max_w = max(clip.w for clip in video_clips)
+    # for video_clip in video_clips:
+    #     # panel_height = video_clip.h
+    #     # duration = video_clip.duration
+    #     # spped = panel_height/duration
         
-        clips.append(clip)
-        total_duration+=video_clip.duration
-    final_clip = CompositeVideoClip(clips).set_duration(total_duration)
-    final_clip = final_clip.resize(height=1080)
-    # final_clip = concatenate_videoclips(video_clips,method='compose')
+    #     clip = video_clip.set_start(total_duration)
+    #     # clip = clip.resize(width=1920)
+    #     h = video_clip.h
+    #     w = video_clip.w
+    #     clip = clip.set_position((0,(max_h-h)//2))
+    #     clips.append(clip)
+        
+    #     total_duration+=video_clip.duration
+    # final_clip = CompositeVideoClip(clips).set_duration(total_duration)
+    # final_clip = final_clip.resize(width=1920)
+    final_clip = concatenate_videoclips(video_clips,method='compose')
     final_clip.write_videofile(output_file, codec='libx264', audio_codec='aac',fps=24)
 
 def calculate_position(sound_data):
@@ -120,7 +129,12 @@ def generate_video(video_metadata:VideoMetadata,output_file,tts):
     
     if not tts :
         sounds_data = [sound for panel in panels for sound in panel['sounds']]
-        generate_moving(ImageClip(src),AudioFileClip(sounds_data[0]['src']),output_file)
+        audio_clip = None
+        try :
+            audio_clip = AudioFileClip(sounds_data[0]['src'])
+        except Exception as e:
+            logger.debug(e)
+        generate_moving(ImageClip(src),audio_clip,output_file)
         return 
     
     video_clips = []
@@ -143,7 +157,7 @@ def generate_video(video_metadata:VideoMetadata,output_file,tts):
             except Exception as e:
                 logger.error(e)
         if(start==duration):
-            duration+=1
+            duration+=2
         y1 = max(0,min(panel[1],image_clip.h/2))
         y2 = min(max(panel[3],y1+image_clip.h/2),image_clip.h)
         x1 = 0
@@ -152,8 +166,12 @@ def generate_video(video_metadata:VideoMetadata,output_file,tts):
         video_clip = video_clip.set_duration(duration-start)
         video_clip = video_clip.resize(width=1920)
         video_clips.append(video_clip)
-
-    final_video = CompositeVideoClip(video_clips).set_duration(duration).set_audio(CompositeAudioClip(audio_clips).set_duration(duration))
+    if len(video_clips) == 0 :
+        return   
+    final_video = CompositeVideoClip(video_clips).set_duration(duration)
+    if len(audio_clips)>0:
+        audio_clip = CompositeAudioClip(audio_clips).set_duration(duration)
+        final_video = final_video.set_audio(audio_clip)
     final_video = final_video.resize(height=1080,width=1920)
     final_video.write_videofile(output_file, codec='libx264', audio_codec='aac',fps=24)
 

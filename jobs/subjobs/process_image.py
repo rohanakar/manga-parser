@@ -40,6 +40,9 @@ def process_image_and_write_video_metadata(arguments):
     output_file = fileutils.get_relative_path(output_directory,output_file_name)
     
     logger.debug(f' writing metadata to  {output_file} with tts => {tts}')
+    if fileutils.exist(output_file):
+        return output_file
+    
     if not tts:
         audioFile = getOST()
         audio_metadata = AudioMetadata(audioFile,Rectangle(0,0,0,0))
@@ -57,12 +60,17 @@ def process_image_and_write_video_metadata(arguments):
         sound_data = panel_data['sound_data']
         audio_metadata_unit=[]
         for sound in sound_data:
-            output_sound_file_name= file_name +f"-tts-{tts}-{count}.mp3"
-            output_sound_file = fileutils.get_relative_path(output_directory,output_sound_file_name)
-            tts_service.performTTS(sound['LineText'],output_sound_file)
+            i =0
+            lineText = sound['LineText']
             del sound['LineText']
-            audio_metadata_unit.append({'src':output_sound_file,'position':sound})
-            count+=1
+            while(i<len(lineText)):
+                line = lineText[i:i+90]
+                output_sound_file_name= file_name +f"-tts-{tts}-{count}.mp3"
+                output_sound_file = fileutils.get_relative_path(output_directory,output_sound_file_name)
+                tts_service.performTTS(line,output_sound_file)
+                count+=1
+                i+=90
+                audio_metadata_unit.append({'src':output_sound_file,'position':sound})            
         audio_metadata.append({'sounds':audio_metadata_unit,'panel':panel_data['panel']})
             
     video_metadata = VideoMetadata(input_image,FileType.IMAGE,audio_metadata)
@@ -94,3 +102,6 @@ def main():
     
 if __name__ == "__main__":
     main()
+
+
+# python -m jobs.subjobs.process_image --input_image spy-x-family-chapter-78-/spyfam_78_11.jpg --tts_enabled True --output_directory test

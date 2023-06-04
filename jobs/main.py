@@ -8,31 +8,40 @@ from utils import fileutils
 import logging.config
 import os
 from jobs.subjobs.merge import merge_video_files
-
+import time
 from jobs.subjobs.process_images import process_images
 
 # Import the logging configuration from the logging_config module
 logger = logging.getLogger(__name__)
 
 def process_inbox(arguments):
+    start_time = time.time()
     logger.debug("Processing inbox...")
     logger.info(arguments)
     logger.info('initializing folders')
 
     initialize_folders([arguments[key] for key in ['inbox_folder','processing_folder','processed_folder','ost_folder']])
-    
+    logger.info(f'****** initialize_folders completed in {(time.time()-start_time):.2f} seconds *********')
+    start_time = time.time()
     logger.info('processing images and generating metadata')
     
     process_images(arguments[key] for key in ['inbox_folder','processing_folder','tts_enabled'])
-
+    logger.info(f'****** process_images completed in {(time.time()-start_time):.2f} seconds *********')
+    start_time = time.time()
+    
     processing_folder = arguments['processing_folder']
     processed_folder = arguments['processed_folder']
     tts = arguments['tts_enabled']
     folders_name = [folder for folder in fileutils.list_folders(processing_folder)]
+    i=0
     for folder in folders_name:
+        i+=1
+        logger.info(f'*********** merging video - progress {i}/{len(folders_name)} ***********')
         folder_name = fileutils.get_relative_path(processing_folder,folder,str(tts))
         file_name = fileutils.get_relative_path(processed_folder,folder+"-"+str(tts)+".mp4")
         merge_video_files([folder_name,file_name,])
+    logger.info(f'****** merge_video_files completed in {(time.time()-start_time):.2f} seconds *********')
+    return time.time()
 
     
 def main():
@@ -61,7 +70,9 @@ def main():
         arguments['tts_enabled'] = False
     
     # Print thep current configuration
+    start_time = time.time()
     process_inbox(arguments)
+    logger.info(f'****** main job completed in {(time.time()-start_time):.2f} seconds *********')
 
 if __name__ == "__main__":
     main()

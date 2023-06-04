@@ -34,6 +34,7 @@ The project's configuration files are located in the `config` directory. The con
 - `api.ini`: Contains API configuration settings.
 - `app.ini`: Includes application-specific settings.
 - `logging.conf`: Configures the logging behavior of the project.
+- Also populate ocr_api_key_1, ocr_api_key_2, discord_key in your environment variables
 
 ## Setup
 
@@ -81,3 +82,6 @@ To use the Manga Parser project, follow these steps:
 
 2. Run the main job to initiate the processing of manga images and video generation:
 
+3. Run discord-server.py for listening to discord messages and crawling images and storing them in the config folders
+
+4. Run content-server.py for viewing manga's and video's .

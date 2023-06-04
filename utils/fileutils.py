@@ -54,5 +54,5 @@ def change_extension(file:string, extension:string):
 def get_relative_path(folder:string,*file):
     return os.path.join(folder,*file)
 
-
-
+def exist(file:string):
+    return os.path.exists(file)
