@@ -100,7 +100,7 @@ def combine_vertical(video_clips:List['VideoClip'],output_file):
             audio_clips = [AudioFileClip(file).audio_loop(duration=audio_duration) for file in audio_clips]
             random.shuffle(audio_clips)
             audio_clip = concatenate_audioclips(audio_clips)
-            final_clip.set_audio(audio_clip)
+            final_clip = final_clip.set_audio(audio_clip)
     final_clip.write_videofile(output_file, codec='libx264', audio_codec='aac',fps=24)
 
 def calculate_position(sound_data):
