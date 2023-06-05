@@ -164,7 +164,7 @@ def generate_video(video_metadata:VideoMetadata,output_file,tts):
         x2 = image_clip.w
         video_clip = video_clip.crop(x1,y1,x2,y2)
         video_clip = video_clip.set_duration(duration-start)
-        video_clip = video_clip.resize(width=1920)
+        video_clip = video_clip.resize((1920,1080))
         video_clips.append(video_clip)
     if len(video_clips) == 0 :
         return   
@@ -172,7 +172,7 @@ def generate_video(video_metadata:VideoMetadata,output_file,tts):
     if len(audio_clips)>0:
         audio_clip = CompositeAudioClip(audio_clips).set_duration(duration)
         final_video = final_video.set_audio(audio_clip)
-    final_video = final_video.resize(height=1080,width=1920)
+    final_video = final_video.resize((1920,1080))
     final_video.write_videofile(output_file, codec='libx264', audio_codec='aac',fps=24)
 
     
