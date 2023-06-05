@@ -24,9 +24,29 @@ def update_status(curr,tts):
         bit_1 = 1
     return bit_0+(bit_1*2)
 
+def processed(curr, tts):
+    bit_0 = curr%2
+    bit_1 = (curr//2)%2
+    if tts == 'True':
+        return bit_0 == 1
+    if tts == 'False':
+        return bit_1 == 1
+    return False
+
 def merge_video_files(arguments):
     input_folder,output_file = arguments
     logger.debug(f'merge files from {input_folder} to {output_file}')
+
+    folder_tts = input_folder[len(default_values['processing_folder']):]
+    folder,tts = folder_tts.split("/")[1:3]
+    try:
+        manga:Manga = database.get(Manga,Manga.folder==folder)[0]
+        if processed(manga.status,tts):
+            logger.debug(f'Already processed {output_file}')
+            return 
+    except Exception as e:
+        logger.error(e)
+
     try:
         files = sorted([fileutils.get_relative_path(input_folder,file) for file in fileutils.get_files(input_folder) if file.endswith('mp4')])
         logger.debug(f'merging {files} to {output_file}')
