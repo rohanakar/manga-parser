@@ -165,7 +165,7 @@
         {% for title in manga_titles %}
             <div class="list-item">
                 <div class="text" onclick="location.href = '/manga/{{title}}';">{{ title.replace('-', ' ')}}</div>
-                <div class="icons" onclick="location.href = '/video/{{title}}';"></div>>
+                <div class="icons" onclick="location.href = '/video/{{title}}';">
                     <img class="icon" src="{{ url_for('static', filename='icons/video_icon.svg') }}" alt="Icon 1">
                 </div>
             </div>
