@@ -87,7 +87,7 @@ def generate_moving(image_clip:ImageClip, audio_clip:AudioClip,output_file):
     if audio_clip is not None :
         clips[0]=clips[0].set_audio(audio_clip)
     final_clip = CompositeVideoClip(clips).set_duration(duration)
-    final_clip = final_clip.resize(height=1080,width=1920)
+    final_clip = final_clip.resize((1920,1080))
     final_clip.write_videofile(output_file, codec='libx264', audio_codec='aac',fps=24)
     return final_clip
 
@@ -101,6 +101,7 @@ def combine_vertical(video_clips:List['VideoClip'],output_file):
             random.shuffle(audio_clips)
             audio_clip = concatenate_audioclips(audio_clips)
             final_clip = final_clip.set_audio(audio_clip)
+    final_clip = final_clip.resize((1920,1080))
     final_clip.write_videofile(output_file, codec='libx264', audio_codec='aac',fps=24)
 
 def calculate_position(sound_data):
