@@ -130,6 +130,7 @@ def performOCR(filePath,details=False):
     
     try:
         api_reponse = response.json()
+        logger.debug(api_reponse)
         logger.debug(api_reponse['OCRExitCode'],api_reponse['IsErroredOnProcessing'],api_reponse['ErrorMessage'])
         # api_reponse = combine_nearby_lines(api_reponse['ParsedResults'][0]['TextOverlay']['Lines'])
         api_reponse = api_reponse['ParsedResults'][0]['TextOverlay']['Lines']
