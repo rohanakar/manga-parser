@@ -19,7 +19,7 @@ def already_processed(folder,tts):
     if(len(manga_list)==0):
         manga = Manga(folder=folder,status=0)
         database.save(manga)
-        return True
+        return False
     
     bit_0 = manga_list[0].status%2
     bit_1 = (manga_list[0].status//2)%2
