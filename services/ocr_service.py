@@ -130,7 +130,6 @@ def performOCR(filePath,details=False):
     
     try:
         api_reponse = response.json()
-        logger.debug(api_reponse)
         logger.debug([{key:api_reponse[key]} for key in api_reponse if key !='ParsedResults'])
         # api_reponse = combine_nearby_lines(api_reponse['ParsedResults'][0]['TextOverlay']['Lines'])
         api_reponse = api_reponse['ParsedResults'][0]['TextOverlay']['Lines']
