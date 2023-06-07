@@ -68,7 +68,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
     for url_pair in extract_url_pair(message.content):
-        save_images_from_url(url_pair[0],url_pair[1])
+        save_images_from_url(url_pair[0].split("?")[0],url_pair[1])
 
 def extract_url_pair(text):
     # Regular expression pattern to match URLs
